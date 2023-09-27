@@ -1,4 +1,6 @@
 let leagueObjects;
+let countryNameList;
+let leagueStandings;
 
 const options = {
 	method: 'GET',
@@ -12,12 +14,25 @@ async function start() {
     try {
         const response = await fetch('https://api-football-v1.p.rapidapi.com/v3/countries', options);
         const result = await response.json();
-        console.log(result);
         createCountryList(result.response);
     } catch (error) {
         console.error(error);
     }
 }
+
+
+function createCountryList(countryList) {
+    countryNameList = countryList.map(country => country.name);
+    document.getElementById("leagues").innerHTML = `
+    <select onchange= "loadLeagues(this.value)">
+        <option>Select The Country</option>
+        ${countryNameList.map(function (country) {
+            return `<option>${country}</option>`
+        }).join('')}
+    </select>
+    `;
+}
+
 
 async function loadLeagues(country) {
     try {
@@ -31,40 +46,14 @@ async function loadLeagues(country) {
     }
 }
 
-async function loadLeagueResults(id) {
-    try {
-        const response = await fetch(`https://api-football-v1.p.rapidapi.com/v3/standings?season=2022&league=${id}`, options);
-        const result = await response.json();
-        console.log(result);
-        displayLeagueResults(result.response);
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-
-start();
-
-function createCountryList(countryList) {
-    const countryNameList = countryList.map(country => country.name);
-    document.getElementById("leagues").innerHTML = `
-    <select onchange= "loadLeagues(this.value)">
-        <option>Select The League</option>
-        ${countryNameList.map(function (country) {
-            return `<option>${country}</option>`
-        }).join('')}
-    </select>
-    `;
-}
-
 
 function createLeagueList(leagueList) {
     const leagueListNames = leagueList.map(league => league.league.name);
     const leagueIdNumber = leagueList.map(league => league.league.id);
-    console.log(leagueObjects);
     document.getElementById("leagues").innerHTML = `
     <select onchange = "loadLeagueResults(findLeagueId(this.value))">
         <option>Select The League</option>
+        <option>Back to Countries</>
         ${leagueListNames.map(function (league) {
             return `<option>${league}</option>`
         }).join('')}
@@ -72,21 +61,52 @@ function createLeagueList(leagueList) {
     `;
 }
 
+
+async function loadLeagueResults(id) {
+    if (id != -1) {
+        try {
+            const response = await fetch(`https://api-football-v1.p.rapidapi.com/v3/standings?season=2022&league=${id}`, options);
+            const result = await response.json();
+            console.log(result);
+            displayLeagueResults(result.response);
+        } catch (error) {
+            console.log(error)
+        }
+    } else {
+        document.getElementById('results').innerHTML = `<div></div>`
+    }
+}
+
+
 function findLeagueId(leagueName) {
-    const matchingleague = leagueObjects.find(league => league.name === leagueName);
-    const matchingId = matchingleague.id;
-    console.log(matchingId);
-    return matchingId
+    if (leagueName == "Back to Countries") {
+        start();
+        return -1
+    } else {
+        const matchingleague = leagueObjects.find(league => league.name === leagueName);
+        const matchingId = matchingleague.id;
+        //console.log(matchingId);
+        return matchingId
+    }
 }
 
 function displayLeagueResults(leagueName) {
-    const teamNames = 
-    document.getElementById('results').innerHTML = 
-    `
-    <ol>
-        ${leagueName[0].league.standings[0].map(function (teams) {
-            return `<li>${teams.team.name}</li>`
-        }).join('')}
-    </ol>
-    `
+    if (leagueName.length == 1) {
+        document.getElementById('results').innerHTML = 
+        `
+        <ol>
+            ${leagueName[0].league.standings[0].map(function (teams) {
+                return `<li>${teams.team.name} <img src="${teams.team.logo}"></li>`
+            }).join('')}
+        </ol>
+        }
+        `
+    } else {
+       document.getElementById('results').innerHTML = `
+        <div>No League Standings for this League. Not a Traditional League.</div>
+        ` 
+    }
 }
+
+
+start();
