@@ -60,3 +60,8 @@ ol {
     margin-right: 10px;
   }
   
+  .no-standings {
+    font-size: 3rem;
+    color: white;
+    margin: 100px 70px;
+  }
