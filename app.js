@@ -1,6 +1,5 @@
 let leagueObjects;
 let countryNameList;
-let leagueStandings;
 
 const options = {
 	method: 'GET',
@@ -23,8 +22,8 @@ async function start() {
 
 function createCountryList(countryList) {
     countryNameList = countryList.map(country => country.name);
-    document.getElementById("leagues").innerHTML = `
-    <select onchange= "loadLeagues(this.value)">
+    document.getElementById("leagues-select").innerHTML = `
+    <select class="select-menu" onchange= "loadLeagues(this.value)">
         <option>Select The Country</option>
         ${countryNameList.map(function (country) {
             return `<option>${country}</option>`
@@ -50,8 +49,8 @@ async function loadLeagues(country) {
 function createLeagueList(leagueList) {
     const leagueListNames = leagueList.map(league => league.league.name);
     const leagueIdNumber = leagueList.map(league => league.league.id);
-    document.getElementById("leagues").innerHTML = `
-    <select onchange = "loadLeagueResults(findLeagueId(this.value))">
+    document.getElementById("leagues-select").innerHTML = `
+    <select class="select-menu" onchange = "loadLeagueResults(findLeagueId(this.value))">
         <option>Select The League</option>
         <option>Back to Countries</>
         ${leagueListNames.map(function (league) {
@@ -94,16 +93,16 @@ function displayLeagueResults(leagueName) {
     if (leagueName.length == 1) {
         document.getElementById('results').innerHTML = 
         `
-        <ol>
+        <ol class= "league-list">
             ${leagueName[0].league.standings[0].map(function (teams) {
-                return `<li>${teams.team.name} <img src="${teams.team.logo}"></li>`
+                return `<li class="list-item">${teams.team.name} <img src="${teams.team.logo}"></li>`
             }).join('')}
         </ol>
         }
         `
     } else {
        document.getElementById('results').innerHTML = `
-        <div>No League Standings for this League. Not a Traditional League.</div>
+        <div class="no-standings">No League Standings for this League. Not a Traditional League.</div>
         ` 
     }
 }
