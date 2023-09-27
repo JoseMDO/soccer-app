@@ -4,7 +4,7 @@ let countryNameList;
 const options = {
 	method: 'GET',
 	headers: {
-		'X-RapidAPI-Key': '2662e1daedmsh48d309a33dda788p1d1bddjsn1c9fd5ab4bb0',
+		'X-RapidAPI-Key': RAPID_API_KEY,
 		'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
 	}
 };
